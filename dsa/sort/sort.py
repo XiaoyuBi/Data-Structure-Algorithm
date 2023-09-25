@@ -35,8 +35,8 @@ def insertion_sort(nums: List[int]) -> List[int]:
 # Quick Sort: O(n*log(n))
 def quick_sort(nums: List[int], low = None, high = None) -> List[int]:
     n = len(nums)
-    if not low: low = 0
-    if not high: high = n - 1
+    if low == None: low = 0 # Must specify None object !!!
+    if high == None: high = n - 1
     if low >= high: return 
 
     pi = partition(nums, low, high)
