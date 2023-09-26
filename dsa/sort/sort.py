@@ -2,6 +2,8 @@ import timeit
 import random
 from typing import List
 
+from dsa.heap.heap import MyHeap
+
 # for reproductivity
 NUM_LENGTH = 2_000
 random.seed(1998)
@@ -110,6 +112,16 @@ def merge(left, right):
     
     return res
 
+# Heap Sort: O(n*log(n))
+def heap_sort(nums: List[int]) -> List[int]:
+    res = []
+    myHeap = MyHeap(nums)
+
+    while myHeap.nodes:
+        res.append(myHeap.pop())
+    
+    return res
+
 # Tim Sort: Insertion + Merge Sort
 # can be seen as natural merge sort with fixed step size
 def tim_sort(nums: List[int]) -> List[int]:
@@ -172,6 +184,8 @@ if __name__ == "__main__":
     test_sorting_algorithm("merge_sort", nums)
     # Natural Merge Sort
     test_sorting_algorithm("natural_merge_sort", nums)
+    # Heap Sort
+    test_sorting_algorithm("heap_sort", nums)
     # Tim Sort
     test_sorting_algorithm("tim_sort", nums)
     # Count Sort
