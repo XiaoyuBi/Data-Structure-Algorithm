@@ -7,8 +7,8 @@ random.seed(1998)
 class MyHeap:
 
     def __init__(self, nums: List[int]):
-        self.nodes = []
-        self.__heapify(nums)
+        self.nodes = nums[:]
+        self.__heapify()
     
     def push(self, new_value: int):
         self.nodes.append(new_value)
@@ -32,40 +32,34 @@ class MyHeap:
         self.__bubble_down()
         return popped_value
     
-    def __heapify(self, nums: List[int]) -> List[int]:
-        for num in nums:
-            self.nodes.append(num)
-            self.__bubble_up()
+    def __heapify(self):
+        n = len(self.nodes)
+        for i in range(n // 2, -1, -1):
+            self.__bubble_down(i)
 
     def __bubble_up(self, new_idx: int | None = None):
         if new_idx == None:
             new_idx = len(self.nodes) - 1
-        
         parent_idx = self.__get_parent_idx(new_idx)
-        if  self.__has_parent(new_idx) and \
-            self.nodes[new_idx] < self.nodes[parent_idx]:
-            # if new value is smaller than parent, swap the values
+        # if new value is smaller than parent
+        while parent_idx >= 0 and \
+              self.nodes[new_idx] < self.nodes[parent_idx]:
             self.nodes[new_idx], self.nodes[parent_idx] = \
             self.nodes[parent_idx], self.nodes[new_idx]
 
-            self.__bubble_up(parent_idx)
+            new_idx = parent_idx
+            parent_idx = self.__get_parent_idx(new_idx)
 
     def __bubble_down(self, cur_idx: int | None = 0):
-        if not self.__has_left(cur_idx): 
-            return 
-
-        # get the smaller one from left and right children
-        child_idx = self.__get_left_idx(cur_idx)
-        if self.__has_right(cur_idx):
-            right_idx = self.__get_right_idx(cur_idx)
-            if self.nodes[right_idx] < self.nodes[child_idx]:
-                child_idx = right_idx
-        
+        child_idx = self.__get_smaller_child_idx(cur_idx)
         # if the cur value is greater than child value
-        if self.nodes[cur_idx] > self.nodes[child_idx]:
+        while child_idx != None and \
+              self.nodes[cur_idx] > self.nodes[child_idx]:
             self.nodes[cur_idx], self.nodes[child_idx] = \
             self.nodes[child_idx], self.nodes[cur_idx]
-            self.__bubble_down(child_idx)
+            
+            cur_idx = child_idx
+            child_idx = self.__get_smaller_child_idx(cur_idx)
 
     def __len__(self):
         return len(self.nodes)
@@ -76,12 +70,22 @@ class MyHeap:
         return 2 * idx + 2
     def __get_parent_idx(self, idx: int) -> int:
         return (idx - 1) // 2
+    def __get_smaller_child_idx(self, idx: int) -> int | None:
+        if not self.__has_left(idx): 
+            return None 
+        
+        child_idx = self.__get_left_idx(idx)
+        if self.__has_right(idx):
+            right_idx = self.__get_right_idx(idx)
+            if self.nodes[right_idx] < self.nodes[child_idx]:
+                child_idx = right_idx
+        
+        return child_idx
+    
     def __has_left(self, idx: int) -> bool:
         return self.__get_left_idx(idx) < len(self.nodes)
     def __has_right(self, idx: int) -> bool:
         return self.__get_right_idx(idx) < len(self.nodes)
-    def __has_parent(self, idx: int) -> bool:
-        return self.__get_parent_idx(idx) >= 0
 
 
 if __name__ == "__main__":
