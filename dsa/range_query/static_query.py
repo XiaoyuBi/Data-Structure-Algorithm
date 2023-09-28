@@ -34,7 +34,7 @@ class SparseTable:
     where b-a+1 (the length of the range) is a power of two.
     """
 
-    sparse_table: dict[tuple[int, int], int] = {}
+    sparse_table: list[list[int]] # [i][j] stands for argmin in range [i, i + 2^j - 1]
 
     def __init__(self, nums: list[int]):
         self.nums = nums 
@@ -45,12 +45,12 @@ class SparseTable:
         if a > b or a < 0:
             raise ValueError("Range is not valid!")
         
-        # Let k be the largest power of two that does not exceed b−a+1
+        # Let j be the largest power of two that does not exceed b−a+1
         # Check [a, a + k - 1] and [b - k + 1, b]
-        k = int(math.log2(b - a + 1))
+        j = int(math.log2(b - a + 1))
 
-        c1 = self.sparse_table[(a, a + k - 1)]
-        c2 = self.sparse_table[(b - k + 1, b)]
+        c1 = self.sparse_table[a][j]
+        c2 = self.sparse_table[b - (1 << j) + 1][j]
         c = c1 
         if self.nums[c2] < self.nums[c1]:
             c = c2 
@@ -62,31 +62,32 @@ class SparseTable:
     # https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=340fde0d3787e07c2ff02a8e323c33eb6cbef620
     def __build_table(self):
         n = len(self.nums)
+        log_n = int(math.log2(n)) + 1
+        self.sparse_table = [[0] * log_n for _ in range(n)]
         
-        # special: a == b
-        for a in range(n):
-            self.sparse_table[(a, a)] = a
+        # special: range length: 1
+        for i in range(n):
+            self.sparse_table[i][0] = i
         
-        # b - a + 1 == 2^x
-        k = 1
-        while k < n:
-            k *= 2
-            w = k // 2
-
-            for a in range(n):
-                b = a - 1 + k
-                if b >= n: break
+        # range length: 2^j == 1 << j
+        j = 1
+        while (1 << j) <= n:
+            i = 0
+            while i + (1 << j) - 1 < n:
                 # two candidates
-                c1 = self.sparse_table[(a, a + w - 1)]
-                c2 = self.sparse_table[(a + w, b)]
+                c1 = self.sparse_table[i][j - 1]
+                c2 = self.sparse_table[i + (1 << (j - 1))][j - 1]
                 c = c1
                 if self.nums[c2] < self.nums[c1]:
                     c = c2
-                self.sparse_table[(a, b)] = c
+                self.sparse_table[i][j] = c
+
+                i += 1
+            j += 1
 
 
 if __name__ == "__main__":
-    nums = [1, 3, 4, 8, 6, 1, 4, 2]
+    nums = [1, 3, 4, 8, 6, 1, 4, -2, 1]
     myPrefixSum = PrefixSum(nums)
     mySparseTable = SparseTable(nums)
     
@@ -96,10 +97,10 @@ if __name__ == "__main__":
     # print(f"Prefix Sum: {myPrefixSum.preSum}")
     print(f"Range [0, 1] sum: {myPrefixSum.query_sum(0, 1)}")
     print(f"Range [0, 5] sum: {myPrefixSum.query_sum(0, 5)}")
-    print(f"Range [2, 4] sum: {myPrefixSum.query_sum(2, 4)}")
+    print(f"Range [6, 7] sum: {myPrefixSum.query_sum(6, 7)}")
 
     print("Sparse Table Algorithm:")
     # print(f"Sparse Table: {mySparseTable.sparse_table}")
     print(f"Range [1, 6] argmin: {mySparseTable.query_argmin(1, 6)}")
     print(f"Range [0, 4] argmin: {mySparseTable.query_argmin(0, 4)}")
-    print(f"Range [3, 6] argmin: {mySparseTable.query_argmin(3, 6)}")
+    print(f"Range [3, 7] argmin: {mySparseTable.query_argmin(3, 7)}")
