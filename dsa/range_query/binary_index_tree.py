@@ -4,6 +4,9 @@ class BITree:
     A binary indexed tree or a Fenwick tree can be seen as a dynamic variant of a prefix sum array. 
     It supports two O(logn) time operations on an array: 
     processing a range sum query and updating a value.
+
+    Note: In fact, using two binary indexed trees it is possible to support minimum queries, 
+    but this is more complicated than to use a segment tree.
     """
 
     tree : list[int]
@@ -46,6 +49,7 @@ class BITree:
             return self.query_sum(b) - self.query_sum(a - 1)
 
     # build in O(n*log(n)), with extra space in O(n)
+    # There is a method to build in O(n), not implemented here
     def __build_tree(self):
         n = len(self.nums)
         self.tree = [0] * (n + 1) # Use 1-index for easy implementation
@@ -65,3 +69,7 @@ if __name__ == "__main__":
     print(f"Range [0, 1] sum: {myBITree.query_sum(0, 1)}")
     print(f"Range [0, 6] sum: {myBITree.query_sum(0, 6)}")
     print(f"Range [6, 7] sum: {myBITree.query_sum(6, 7)}")
+
+    print(f"Update index 3 with -4")
+    myBITree.update(3, -4)
+    print(f"Range [0, 6] sum: {myBITree.query_sum(0, 6)}")
