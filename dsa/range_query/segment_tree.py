@@ -1,3 +1,11 @@
+MAX_INT = 1_000_000
+
+# get the smallest power of 2 that no less than x
+def msb(x: int) -> int:
+    if x.bit_count() == 1:
+        return x 
+    else:
+        return 1 << (x.bit_length())
 
 # Recursive Building for sum query
 class SegmentTreeNode:
@@ -63,9 +71,69 @@ class SegmentTree:
         return SegmentTreeNode(start, end, left.sum + right.sum, left, right)
 
 
+# Iterative List Building for minimum query
+class SegmentTreeList:
+    """
+    Easy to implement for arrays whose length are power pf 2.
+    If not, one can append zeroes to make up.
+
+    for node with idx: 
+        left: 2 * idx + 1
+        right: 2 * idx + 2
+        parent: (idx - 1) // 2
+    """
+
+    tree_list: list[int]
+
+    def __init__(self, nums: list[int]):
+        self.nums = nums 
+        self.__build_tree()
+    
+    def query_min(self, a: int, b: int) -> int:
+        a += self.offset
+        b += self.offset
+        
+        res = MAX_INT
+        while a <= b:
+            if a % 2 == 0: # a is on right child
+                res = min(res, self.tree_list[a])
+                a += 1
+            if b % 2 == 1: # b is on left child
+                res = min(res, self.tree_list[b])
+                b -= 1
+            
+            a = (a - 1) // 2
+            b = (b - 1) // 2
+        
+        return res
+
+    # build in O(n) with extra space O(n)
+    def __build_tree(self) -> list[int]:
+        n = len(self.nums)
+        self.offset = msb(n) - 1
+        self.tree_list = [MAX_INT] * (self.offset + n)
+
+        # put in leaf values
+        for i in range(n):
+            self.tree_list[i + self.offset] = self.nums[i]
+        
+        # update non-leaf values
+        for i in range(self.offset - 1, -1, -1):
+            tmp = self.tree_list[i]
+
+            if 2 * i + 1 < self.offset + n:
+                tmp = min(tmp, self.tree_list[2 * i + 1])
+            if 2 * i + 2 < self.offset + n:
+                tmp = min(tmp, self.tree_list[2 * i + 2])
+            
+            self.tree_list[i] = tmp
+
+
+
 if __name__ == "__main__":
     nums = [1, 3, 4, 8, 6, 1, 4, 2]
     mySegTree = SegmentTree(nums)
+    mySegTreeList = SegmentTreeList(nums)
     
     print(f"Orignal nums: {nums}")
 
@@ -77,3 +145,8 @@ if __name__ == "__main__":
     print(f"Update index 3 with -4")
     mySegTree.update(3, -4)
     print(f"Range [1, 3] sum: {mySegTree.query_sum(1, 3)}")
+
+    print("Segment Tree (List Version):")
+    print(f"Range [0, 1] min: {mySegTreeList.query_min(0, 1)}")
+    print(f"Range [0, 6] min: {mySegTreeList.query_min(0, 6)}")
+    print(f"Range [6, 7] min: {mySegTreeList.query_min(6, 7)}")
