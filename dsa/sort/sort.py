@@ -2,7 +2,7 @@ import timeit
 import random
 from typing import List
 
-from dsa.heap.heap import MyHeap
+from dsa.sort.heap import MyHeap
 
 # for reproductivity
 NUM_LENGTH = 2_000
