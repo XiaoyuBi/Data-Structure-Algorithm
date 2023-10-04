@@ -49,17 +49,20 @@ class SegmentTree:
     def update(self, idx: int, val: int, root: SegmentTreeNode = None):
         if root == None:
             root = self.tree
-        # update root value
-        root.sum += val 
+        
         # find the leaf node, stop searching
         if root.start == root.end == idx:
-            return 
+            # update leaf value
+            root.sum = val  
+            return
         
         mid = (root.start + root.end) // 2
         if idx <= mid:
             self.update(idx, val, root.left)
         else:
             self.update(idx, val, root.right)
+        # Important: update node sum........
+        root.sum = root.left.sum + root.right.sum
 
     def __build_tree(self, start: int, end: int) -> SegmentTreeNode:
         if start == end:
@@ -75,9 +78,9 @@ class SegmentTree:
 class SegmentTreeList:
     """
     Easy to implement for arrays whose length are power pf 2.
-    If not, one can append zeroes to make up.
+    If not, one can always append zeroes to make up the length.
 
-    for node with idx: 
+    for node with idx (0-index): 
         left: 2 * idx + 1
         right: 2 * idx + 2
         parent: (idx - 1) // 2
@@ -89,6 +92,7 @@ class SegmentTreeList:
         self.nums = nums 
         self.__build_tree()
     
+    # query in O(log(n))
     def query_min(self, a: int, b: int) -> int:
         a += self.offset
         b += self.offset
@@ -106,6 +110,22 @@ class SegmentTreeList:
             b = (b - 1) // 2
         
         return res
+    
+    # update in O(log(n))
+    def update(self, idx: int, val: int):
+        idx += self.offset
+        self.tree_list[idx] = val
+
+        while (idx - 1) // 2 >= 0:
+            idx = (idx - 1) // 2 # parent_idx
+            tmp = self.tree_list[idx]
+            
+            if 2 * idx + 1 < len(self.tree_list):
+                tmp = min(tmp, self.tree_list[2 * idx + 1])
+            if 2 * idx + 2 < len(self.tree_list):
+                tmp = min(tmp, self.tree_list[2 * idx + 2])
+            
+            self.tree_list[idx] = tmp
 
     # build in O(n) with extra space O(n)
     def __build_tree(self) -> list[int]:
@@ -150,3 +170,7 @@ if __name__ == "__main__":
     print(f"Range [0, 1] min: {mySegTreeList.query_min(0, 1)}")
     print(f"Range [0, 6] min: {mySegTreeList.query_min(0, 6)}")
     print(f"Range [6, 7] min: {mySegTreeList.query_min(6, 7)}")
+
+    print(f"Update index 3 with -4")
+    mySegTreeList.update(3, -4)
+    print(f"Range [1, 3] min: {mySegTreeList.query_min(1, 3)}")
