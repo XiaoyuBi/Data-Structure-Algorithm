@@ -69,7 +69,7 @@ Solution for #207
 ```python
 from collections import deque, defaultdict
 
-def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+def canFinish(numCourses: int, prerequisites: List[List[int]]) -> bool:
     indegree = [0] * numCourses
     graph = defaultdict(list)
     for a, b in prerequisites:
@@ -99,7 +99,7 @@ Solution for #210
 ```python
 from collections import deque, defaultdict
 
-def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+def findOrder(numCourses: int, prerequisites: List[List[int]]) -> List[int]:
     indegree = [0] * numCourses
     graph = defaultdict(list)
     for a, b in prerequisites:
