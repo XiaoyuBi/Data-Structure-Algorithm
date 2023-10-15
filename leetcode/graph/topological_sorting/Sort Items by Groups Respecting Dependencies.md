@@ -13,7 +13,7 @@ Return __any solution__ if there is more than one solution and return an __empty
 
 Example 1:
 
-![1203-1](./1203-1.png)
+![1203-1](./figs/1203-1.png)
 
 ```text
 Input: n = 8, m = 2, group = [-1,-1,1,0,0,1,0,-1], beforeItems = [[],[6],[5],[6],[3,6],[],[],[]]

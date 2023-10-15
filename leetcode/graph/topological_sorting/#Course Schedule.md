@@ -81,7 +81,7 @@ Course 0 is not a prerequisite of course 1, but the opposite is true.
 
 Example 2:
 
-![1462-2](./1462-2.png)
+![1462-2](./figs/1462-2.png)
 
 ```text
 Input: numCourses = 3, prerequisites = [[1,2],[1,0],[2,0]], queries = [[1,0],[1,2]]
