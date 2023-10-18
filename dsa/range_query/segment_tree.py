@@ -77,7 +77,7 @@ class SegmentTree:
 # Iterative List Building for minimum query
 class SegmentTreeList:
     """
-    Easy to implement for arrays whose length are power pf 2.
+    Easy to implement for arrays whose length are power of 2.
     If not, one can always append zeroes to make up the length.
 
     for node with idx (0-index): 
@@ -149,10 +149,75 @@ class SegmentTreeList:
             self.tree_list[i] = tmp
 
 
+# Iterative List Building for sum query
+class SegmentTreeEasyList:
+    """
+    This is a much easier implementation for segment tree with 
+    list structure, but it is also much harder to understand.
+
+    for node with idx (1-index): 
+        left: idx << 1
+        right: idx << 1 | 1
+        parent: idx >> 1
+    """
+
+    tree_list: list[int]
+
+    def __init__(self, nums: list[int]):
+        self.nums = nums
+        self.__build_tree()
+    
+    # query in O(log(n))
+    def query_sum(self, a: int, b: int) -> int:
+        a += len(self.nums)
+        b += len(self.nums)
+
+        res = 0
+        while a <= b:
+            if (a & 1):
+                res += self.tree_list[a]
+                a += 1
+            
+            if ((b + 1) & 1):
+                res += self.tree_list[b]
+                b -= 1
+            
+            a >>= 1
+            b >>= 1
+
+        return res
+    
+    # update in O(log(n))
+    def update(self, idx: int, val: int):
+        idx += len(self.nums)
+        self.tree_list[idx] = val
+
+        while idx > 1:
+            idx >>= 1 # parent idx
+
+            self.tree_list[idx] =\
+            self.tree_list[idx << 1] + self.tree_list[idx << 1 | 1]
+
+    # build in O(n) with extra space O(n)
+    def __build_tree(self) -> list[int]:
+        n = len(self.nums)
+        self.tree_list = [0] * (2 * n) # !!!
+
+        # original values with offset n
+        for i in range(n):
+            self.tree_list[i + n] = self.nums[i]
+        
+        # non-leaf values from (n - 1) ~ 1
+        for i in range(n - 1, 0, -1):
+            self.tree_list[i] = \
+            self.tree_list[i << 1] + self.tree_list[i << 1 | 1]
+
+
 
 if __name__ == "__main__":
-    nums = [1, 3, 4, 8, 6, 1, 4, 2]
+    nums = [1, 3, 4, -3, 8, 6, 1, 4, 2]
     mySegTree = SegmentTree(nums)
+    mySegTreeEasy = SegmentTreeEasyList(nums)
     mySegTreeList = SegmentTreeList(nums)
     
     print(f"Orignal nums: {nums}")
@@ -161,10 +226,16 @@ if __name__ == "__main__":
     print(f"Range [0, 1] sum: {mySegTree.query_sum(0, 1)}")
     print(f"Range [0, 6] sum: {mySegTree.query_sum(0, 6)}")
     print(f"Range [6, 7] sum: {mySegTree.query_sum(6, 7)}")
+    print("Segment Tree (Easy List Version):")
+    print(f"Range [0, 1] sum: {mySegTreeEasy.query_sum(0, 1)}")
+    print(f"Range [0, 6] sum: {mySegTreeEasy.query_sum(0, 6)}")
+    print(f"Range [6, 7] sum: {mySegTreeEasy.query_sum(6, 7)}")
 
     print(f"Update index 3 with -4")
     mySegTree.update(3, -4)
+    mySegTreeEasy.update(3, -4)
     print(f"Range [1, 3] sum: {mySegTree.query_sum(1, 3)}")
+    print(f"Range [1, 3] sum: {mySegTreeEasy.query_sum(1, 3)}")
 
     print("Segment Tree (List Version):")
     print(f"Range [0, 1] min: {mySegTreeList.query_min(0, 1)}")
