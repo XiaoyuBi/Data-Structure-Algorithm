@@ -40,7 +40,7 @@ Explanation: We can observe that since all 4 edges have equal weight, choosing a
 
 ## Solution
 
-Use the Kruskal's algorithm to find the minimum spanning tree by sorting the edges and picking edges from ones with smaller weights. It's also common to use Union Find structure when implementing Kruskal's algorithm. (see [code examples](../../../dsa/graph/spanning_tree.py))
+Use the Kruskal's algorithm to find the minimum spanning tree by sorting the edges and picking edges from ones with smaller weights. It's also common to use Union Find structure when implementing Kruskal's algorithm. (see [code examples](/dsa/graph/spanning_tree.py))
 
 Note that:
 
