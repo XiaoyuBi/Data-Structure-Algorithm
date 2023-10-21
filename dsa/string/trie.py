@@ -10,6 +10,8 @@ class Trie:
     A trie is a rooted tree that maintains a set of strings. 
     Each string in the set is stored as a chain of characters that starts at the root. 
     If two strings have a common prefix, they also have a common chain in the tree.
+
+    Both insertion and search take O(n) time, where n is the length of the query string.
     """
     def __init__(self):
         self.root = TrieNode("")
