@@ -1,4 +1,4 @@
-# Dynamic Programming
+# Meet in the Middle
 
 ## 1755. Closest Subsequence Sum
 
