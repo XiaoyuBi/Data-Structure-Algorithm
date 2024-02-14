@@ -49,6 +49,7 @@ Constraints:
 Hint1: The naive solution is to check all possible subsequences. This works in $O(2^n)$.
 
 Hint2: Divide the array into two parts of nearly is equal size.
+This is sometimes called _**Meet in the Middle**_ method.
 
 Hint3: Consider all subsets of one part and make a list of all possible subset sums and sort this list.
 
